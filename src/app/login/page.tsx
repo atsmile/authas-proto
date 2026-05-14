@@ -24,7 +24,6 @@ export default function LoginPage() {
       return;
     }
 
-    // ログイン成功したらトップページへ
     window.location.href = "/";
   };
 
@@ -53,6 +52,8 @@ export default function LoginPage() {
         {error && <p>{error}</p>}
         <button type="submit">ログイン</button>
       </form>
+      <hr />
+      <a href="/api/auth/google">Google でログイン</a>
     </div>
   );
 }
