@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# authas-proto
 
-## Getting Started
+Google OAuth 自前実装の学習用リポジトリ。  
+Supabase Auth を使った auth-app に作り直す前の実装確認用。
 
-First, run the development server:
+## 技術スタック
+
+- Next.js / TypeScript / Tailwind CSS
+- Prisma 7 + PostgreSQL（Docker）
+- bcryptjs（パスワードハッシュ化）
+- jsonwebtoken（JWT認証）
+- Google OAuth 2.0（自前実装）
+
+## 機能
+
+- 新規登録（メール・パスワード）
+- ログイン（メール・パスワード）
+- ログイン（Google OAuth）
+- ログアウト
+- 認証状態確認（/api/auth/me）
+
+## ローカル環境構築
+
+### 前提
+
+- Node.js 22.x（.nvmrc）
+- Docker（Rancher Desktop）
+
+### セットアップ
+
+1. リポジトリをクローン
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   git clone https://github.com/atsmile/authas-proto.git
+   cd authas-proto
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. パッケージインストール
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+   npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. 環境変数を設定
 
-## Learn More
+   `.env` と `.env.local` を作成して以下を設定：
 
-To learn more about Next.js, take a look at the following resources:
+```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/authas_proto"
+   JWT_SECRET="your-secret-key"
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. PostgreSQL を起動
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+   docker compose up -d
+```
 
-## Deploy on Vercel
+5. マイグレーション実行
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+   npx prisma migrate dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6. 開発サーバー起動
+
+```bash
+   npm run dev
+```
+
+## API
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | /api/auth/register | 新規登録 |
+| POST | /api/auth/login | ログイン |
+| GET | /api/auth/me | 認証状態確認 |
+| POST | /api/auth/logout | ログアウト |
+| GET | /api/auth/google | Google認証開始 |
+| GET | /api/auth/callback/google | Googleコールバック |
